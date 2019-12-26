@@ -1,0 +1,176 @@
+﻿<Window x:Class="MultiMediaPlayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultiMediaPlayer"
+        mc:Ignorable="d"
+        Title="MultiMedia Player" Height="450" Width="800"
+        Loaded="Window_Loaded">
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="7*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <!--Define grid-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!--Bars Area-->
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Vertical"  Background="AliceBlue">
+                <StackPanel Orientation="Horizontal"  Background="AliceBlue">
+                    <Button Name="NewPlayListButton" Margin="10,0,10,0"
+                                Cursor="Hand" BorderThickness="0" Background="AliceBlue" Click="NewPlayListButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="30" Height="30" Source="drawables/browser.png" Stretch="Fill"/>
+                            <TextBlock Text="New playlist" TextAlignment="Justify" Height="20"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Background="AliceBlue">
+                <Button Name="LoadPlayListButton" Margin="10,0,10,0"
+                                Cursor="Hand" BorderThickness="0" Background="AliceBlue" Click="LoadPlayListButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="30" Height="30" Source="drawables/Load.png" Stretch="Fill"/>
+                        <TextBlock Text="Load play list" TextAlignment="Justify" Height="20"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Name="SavePlayListButton" Margin="10,0,10,0"
+                                Cursor="Hand" BorderThickness="0" Background="AliceBlue" Click="SavePlayListButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="30" Height="30" Source="drawables/Save.png" Stretch="Fill"/>
+                        <TextBlock Text="Save play list" TextAlignment="Justify" Height="20"/>
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="84*"/>
+                    <ColumnDefinition Width="233*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="9*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2" Margin="0,0,-0.4,0">
+                    <Button Name="AddMusicButton" Margin="10,0,10,0"
+                                Cursor="Hand" BorderThickness="0" Background="White" Click="AddMusicButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="30" Height="30" Source="drawables/Add.png" Stretch="Fill"/>
+                            <TextBlock Text="Add music" TextAlignment="Justify" Height="20"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <ListView Grid.Row="1" Grid.Column="0" Name="PlayList" ScrollViewer.VerticalScrollBarVisibility="Visible"
+                          SelectionChanged="PlayList_SelectionChanged" Grid.ColumnSpan="2" Margin="0,0,-0.4,-0.2" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Name="Decription" Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+
+
+
+            <!--Logo-->
+            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
+                <Image Width="200" Height="200"
+                    RenderTransformOrigin="0.5, 0.5" x:Name="RotateImage" 
+                       Stretch="Uniform" Source="images/music.png" Margin="30" 
+                       RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.RenderTransform>
+                        <RotateTransform Angle="0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Image.RenderTransform>
+                </Image>
+            </StackPanel>
+        </Grid>
+
+        <!--Media feature area-->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="7*"/>
+            </Grid.RowDefinitions>
+
+            <!--Slider-->
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Name="textBlockProgress" Text="00:00:00" VerticalAlignment="Center" Foreground="DarkRed" Margin="10,0,0,0"/>
+                <Slider Grid.Column="1" Name="sliderDuration" LargeChange="10" IsEnabled="True" Minimum="0" Maximum="100" Margin="3" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Name="textBlockDuration" Text="00:00:00" Foreground="RoyalBlue" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </Grid>
+
+            <!-- Media Button -->
+            <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+
+                <Button Style="{StaticResource TransparentStyle}" Name="ModeButton" Margin="5,0,5,0"
+                                Cursor="Hand" BorderThickness="0" Click="ModeButton_Click">
+                    <Image Width="50" Height="50" Source="drawables/shuffle.png" Stretch="Fill"  
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           />
+                </Button>
+                <Button Style="{StaticResource TransparentStyle}" Name="PreviousButton" Margin="5,0,5,0"
+                                Cursor="Hand" BorderThickness="0" Click="PreviousButton_Click">
+                    <Image Width="50" Height="50" Source="drawables/previous.png" Stretch="Fill"  
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           />
+                </Button>
+                <Button Style="{StaticResource TransparentStyle}" Name="PlayButton" Margin="5,0,5,0"
+                                Cursor="Hand" BorderThickness="0" Click="PlayButton_Click">
+                    <Image Width="50" Height="50" Source="drawables/play.png" Stretch="Fill"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+
+                <Button Style="{StaticResource TransparentStyle}" Name="StopButton" Margin="5,0,5,0"
+                                Cursor="Hand" BorderThickness="0" Click="StopButton_Click">
+                    <Image Width="50" Height="50" Source="drawables/stop.png" Stretch="Fill"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Button>
+
+                <Button Style="{StaticResource TransparentStyle}" Name="ForwardButton" Margin="5,0,5,0"
+                                Cursor="Hand" BorderThickness="0" Click="ForwardButton_Click">
+                    <Image Width="50" Height="50" Source="drawables/forward.png" Stretch="Fill"  
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           />
+                </Button>
+            </StackPanel>
+
+        </Grid>
+
+
+    </Grid>
+
+</Window>
