@@ -52,13 +52,16 @@ namespace MultiMediaPlayer
         {
             if (_player.Source != null)
             {
-                
-                var currentPos = _player.Position.ToString(@"mm\:ss");
-                var duration = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
+               
+                if (_player.NaturalDuration.HasTimeSpan == true)
+                {
+                    var currentPos = _player.Position.ToString(@"mm\:ss");
+                    var duration = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
+                    Title = String.Format($"{currentPos} / {duration}");
+                    CurrentTime.Text = currentPos;
+                    DurationTime.Text = duration;
+                }
 
-                Title = String.Format($"{currentPos} / {duration}");
-                CurrentTime.Text = currentPos;
-                DurationTime.Text = duration;
             }
             else
                 Title = "No file selected...";
