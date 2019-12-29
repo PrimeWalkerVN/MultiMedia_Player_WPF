@@ -131,8 +131,14 @@
                     <ColumnDefinition Width="8*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Name="CurrentTime" Text="00:00" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DarkRed" Margin="10,0,0,0"/>
-                <Slider Grid.Column="1" Name="sliderDuration" LargeChange="10" IsEnabled="True" Minimum="0" Maximum="100" Margin="3" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="0" Name="CurrentTime" Text="00:00" VerticalAlignment="Bottom" HorizontalAlignment="Center" Foreground="DarkRed" Margin="30,0,20.2,10.6"/>
+                <Slider Grid.Column="1" Name="sliderDuration" 
+                        IsEnabled="True" Minimum="0" Maximum="100" Margin="3" 
+                        VerticalAlignment="Center"
+                        IsMoveToPointEnabled="True"
+                        Thumb.DragCompleted="sliderProcess_DragCompleted"
+                        Thumb.DragStarted="sliderProcess_DragStarted"
+                        ValueChanged="slider_ValueChange"/>
                 <TextBlock Grid.Column="2" Name="DurationTime" Text="00:00" Foreground="RoyalBlue" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0"/>
             </Grid>
 
