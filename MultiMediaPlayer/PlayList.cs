@@ -14,7 +14,10 @@ namespace MultiMediaPlayer
         public String[] MediaList {  get; set;}
 
         public int TotalMedia { 
-            get { return MediaList.Length; }
+            get {
+                if (MediaList == null) return 0;
+                else
+                     return MediaList.Length; }
         }
     }
 }

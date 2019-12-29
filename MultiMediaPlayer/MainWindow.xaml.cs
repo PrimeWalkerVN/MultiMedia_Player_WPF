@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -50,11 +51,24 @@ namespace MultiMediaPlayer
 
         private void _hook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            if (e.Control && e.Shift && (e.KeyCode == Keys.E))
+            if (e.Control && e.Shift && (e.KeyCode == Keys.P))
             {
                 PlayButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, PlayButton));
             }
+            if (e.Control && e.Shift && (e.KeyCode == Keys.R))
+            {
+                ForwardButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, ForwardButton));
+            }
+            if (e.Control && e.Shift && (e.KeyCode == Keys.E))
+            {
+                PreviousButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, PreviousButton));
+            }
         }
+
+        private Uri _playUri = new Uri(@"drawables/play.png", UriKind.Relative);
+        private Uri _pauseUri = new Uri(@"drawables/pause.png", UriKind.Relative);
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -99,11 +113,16 @@ namespace MultiMediaPlayer
 
         private void PlayPosition(int position)
         {
-            if (position > _playList.TotalMedia || position < 0) return;
             _currentPosition = position;
-            _player.Open(new Uri(_playList.MediaList[position], UriKind.Absolute));
+            if (position > _playList.TotalMedia - 1)
+                _currentPosition = 0;  
+            if (position < 0)
+                _currentPosition = _playList.TotalMedia - 1;
+               
+            _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
             _player.Play();
             _isPlaying = true;
+            setImagePlay(_pauseUri);
         }
 
         private void PlayList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -113,7 +132,10 @@ namespace MultiMediaPlayer
 
         private void AddMusicButton_Click(object sender, RoutedEventArgs e)
         {
+
             Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
+            setImagePlay(_playUri);
+            _isPlaying = false;
             op.Title = "Select a picture";
             op.Filter = "All Media Files|*.wav;*.aac;*.wma;*.wmv;*.avi;*.mpg;*.mpeg;" +
                 "*.m1v;*.mp2;*.mp3;*.mpa;*.mpe;*.m3u;*.mp4;*.mov;*.3g2;*.3gp2;*.3gp;*.3gpp;*.m4a;*.cda;*.aif;*.aifc;*.aiff;*.mid;*.midi;" +
@@ -123,6 +145,7 @@ namespace MultiMediaPlayer
 
             if (op.ShowDialog() == true)
             {
+                
                 _playList.MediaList = op.FileNames;
 
                 //Add to array to display into listview
@@ -131,8 +154,6 @@ namespace MultiMediaPlayer
                     var info = new FileInfo(_playList.MediaList[i]);
                     _fullPaths.Add(info);
                 }
-
-               // System.Windows.MessageBox.Show($"Load successful! ....\n");
                 PlayPosition(_currentPosition);
                 return;
             }
@@ -146,16 +167,26 @@ namespace MultiMediaPlayer
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_playList.MediaList == null) _isPlaying = true;
             if (_isPlaying == false)
             {
                 _player.Play();
+                setImagePlay(_pauseUri);
             }
             else {
                 _player.Pause();
+                setImagePlay(_playUri);
+               
             }
 
             _isPlaying = !_isPlaying;
                
+        }
+
+        private void setImagePlay(Uri uri) {
+            BitmapImage image = null;
+            image = new BitmapImage(uri);
+            PlayButtonImage.Source = image;
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
@@ -170,8 +201,9 @@ namespace MultiMediaPlayer
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {     
-                _player.Stop();
-                _isPlaying = false;
+            _player.Stop();
+            setImagePlay(_playUri);
+            _isPlaying = false;
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
@@ -187,7 +219,38 @@ namespace MultiMediaPlayer
 
         private void SavePlayListButton_Click(object sender, RoutedEventArgs e)
         {
+            
+                    
+                string presetFolderPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string presetFilePath = presetFolderPath + @"\" + ".txt";
 
+                if (!Directory.Exists(presetFolderPath)) Directory.CreateDirectory(presetFolderPath);
+
+                if (!File.Exists(presetFilePath))
+                {
+                    using (StreamWriter sw = File.CreateText(presetFilePath))
+                    {
+                        foreach (PlayList pl in PlayList.Items)
+                        {
+                            string mediaName = $"{pl.MediaList}";
+                            sw.WriteLine(mediaName);
+                        }
+                    }
+                    System.Windows.MessageBox.Show($"PlayList saved in {presetFilePath}");
+                }
+                else
+
+                {
+                    using (StreamWriter sw = File.AppendText(presetFilePath))
+                    {
+                        foreach (PlayList pl in PlayList.Items)
+                        {
+                            string methodTemplate = $"{pl.MediaList}";
+                            sw.WriteLine(methodTemplate);
+                        }
+                    }
+                    System.Windows.MessageBox.Show($"Preset saved in {presetFilePath}");
+                }
         }
 
         private void NewPlayListButton_Click(object sender, RoutedEventArgs e)
