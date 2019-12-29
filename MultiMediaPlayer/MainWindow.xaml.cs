@@ -1,15 +1,18 @@
-﻿using Microsoft.Win32;
+﻿using Gma.System.MouseKeyHook;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,10 +27,11 @@ namespace MultiMediaPlayer
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        String defaultFileName = "saved_play_list.txt";
         MediaPlayer _player = new MediaPlayer();
         PlayList _playList = new PlayList();
-        int _currentPosition = 0;
+        int _currentPosition=0;
+        int _shufflePos = 0;
 
         List<int> _mediaPositionList = new List<int>();
         List<int> _shufflePositionList = new List<int>();
@@ -41,6 +45,35 @@ namespace MultiMediaPlayer
         BindingList<FileInfo> _fullPaths = new BindingList<FileInfo>();
         DispatcherTimer _timer;
         public static bool isDraggingSlider = false;
+        private IKeyboardMouseEvents _hook;
+
+        public void Subscribe()
+        {
+            _hook = Hook.GlobalEvents();
+            _hook.KeyUp += _hook_KeyUp;
+        }
+
+        public void Unsubscribe()
+        {
+            _hook.KeyUp -= _hook_KeyUp;
+            _hook.Dispose();
+        }
+
+        private void _hook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.Control && e.Shift && (e.KeyCode == Keys.P))
+            {
+                PlayButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, PlayButton));
+            }
+            if (e.Control && e.Shift && (e.KeyCode == Keys.R))
+            {
+                ForwardButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, ForwardButton));
+            }
+            if (e.Control && e.Shift && (e.KeyCode == Keys.E))
+            {
+                PreviousButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, PreviousButton));
+            }
+        }
 
         private Uri _playUri = new Uri(@"drawables/play.png", UriKind.Relative);
         private Uri _pauseUri = new Uri(@"drawables/pause.png", UriKind.Relative);
@@ -60,11 +93,13 @@ namespace MultiMediaPlayer
             _timer.Tick += timer_Tick;
             _timer.Start();
 
+            Subscribe();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             PlayList.ItemsSource = _fullPaths;
+            LoadPlayList(defaultFileName);
         }
 
 
@@ -117,6 +152,21 @@ namespace MultiMediaPlayer
             setImagePlay(_pauseUri);
         }
 
+        private void PlayShuffle(int position)
+        {
+            _currentPosition = position;
+            if (position > _playList.TotalMedia - 1)
+                _currentPosition = 0;
+            if (position < 0)
+                _currentPosition = _playList.TotalMedia - 1;
+
+            _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
+            _player.Play();
+            _isPlaying = true;
+            PlayList.SelectedIndex = _currentPosition;
+            setImagePlay(_pauseUri);
+        }
+
         private void PlayList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -124,9 +174,10 @@ namespace MultiMediaPlayer
 
         private void AddMusicButton_Click(object sender, RoutedEventArgs e)
         {
+
+            Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             setImagePlay(_playUri);
             _isPlaying = false;
-            OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             op.Title = "Select a picture";
             op.Filter = "All Media Files|*.wav;*.aac;*.wma;*.wmv;*.avi;*.mpg;*.mpeg;" +
                 "*.m1v;*.mp2;*.mp3;*.mpa;*.mpe;*.m3u;*.mp4;*.mov;*.3g2;*.3gp2;*.3gp;*.3gpp;*.m4a;*.cda;*.aif;*.aifc;*.aiff;*.mid;*.midi;" +
@@ -152,13 +203,12 @@ namespace MultiMediaPlayer
                     var info = new FileInfo(_playList.MediaList[i]);
                     _fullPaths.Add(info);
                 }
-
                 PlayPosition(_currentPosition);
                 return;
             }
             else
             {
-                MessageBox.Show("Load failed!\n");
+                System.Windows.MessageBox.Show("Load failed!\n");
                 return;
             }
         }
@@ -190,7 +240,22 @@ namespace MultiMediaPlayer
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayPosition(_currentPosition - 1);
+
+            _timer.Stop();
+            if (_isShuffle == true)
+            {
+                PlayShuffle(_shufflePositionList[_mediaPositionList[_shufflePositionList[_shufflePos]]]);
+                ++_shufflePos;
+                if (_shufflePos > _playList.TotalMedia - 1)
+                    _shufflePos = 0;
+                if (_shufflePos < 0)
+                    _shufflePos = _playList.TotalMedia - 1;
+            }
+            else
+            {
+                PlayPosition(_currentPosition - 1);
+            }
+            _timer.Start();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -205,8 +270,12 @@ namespace MultiMediaPlayer
             _timer.Stop();
             if (_isShuffle == true)
             {
-                PlayPosition(_shufflePositionList[_currentPosition]);
-
+                PlayShuffle(_shufflePositionList[_mediaPositionList[_shufflePositionList[_shufflePos]]]);
+                --_shufflePos;
+                if (_shufflePos > _playList.TotalMedia - 1)
+                    _shufflePos = 0;
+                if (_shufflePos < 0)
+                    _shufflePos = _playList.TotalMedia - 1;
             }
             else {
                 PlayPosition(_currentPosition + 1);
@@ -218,7 +287,7 @@ namespace MultiMediaPlayer
 
         private void LoadPlayListButton_Click(object sender, RoutedEventArgs e)
         {
-            var screen = new OpenFileDialog();
+            var screen = new Microsoft.Win32.OpenFileDialog();
             screen.DefaultExt = "txt";
             screen.Filter = "Playlist Files|*.txt";
             if (screen.ShowDialog() == true)
@@ -226,7 +295,7 @@ namespace MultiMediaPlayer
                 LoadPlayList(screen.FileName);
             }
             else {
-                MessageBox.Show("Load failed!\n");
+                System.Windows.MessageBox.Show("Load failed!\n");
             }
 
         }
@@ -234,7 +303,7 @@ namespace MultiMediaPlayer
         private void SavePlayListButton_Click(object sender, RoutedEventArgs e)
         {
             if (_playList.MediaList == null) return;
-            SaveFileDialog saveFile = new SaveFileDialog();
+            Microsoft.Win32.SaveFileDialog saveFile = new Microsoft.Win32.SaveFileDialog();
 
             saveFile.DefaultExt = "txt";
             saveFile.Filter = "Playlist Files|*.txt";
@@ -247,9 +316,12 @@ namespace MultiMediaPlayer
 
         private void SavePlayList(String fileName) {
 
+            if (_playList.MediaList == null) return;
+
             var writer = new StreamWriter(fileName);
 
             writer.WriteLine(_playList.TotalMedia);
+            writer.WriteLine(_currentPosition); 
 
             for (int i = 0; i < _playList.TotalMedia; i++)
             {
@@ -258,26 +330,37 @@ namespace MultiMediaPlayer
 
             writer.Close();
 
-            MessageBox.Show("PlayList is saved");
+            System.Windows.MessageBox.Show("PlayList is saved");
+
         }
 
         private void LoadPlayList(String fileName) {
+            if (!File.Exists(fileName)) return;
 
             StreamReader reader = new StreamReader(fileName);
             var firstLine = reader.ReadLine();
             int total = 0;
             bool isNum = int.TryParse(firstLine, out total);
             if (!isNum){
-                MessageBox.Show("Load failed!\n");
+                System.Windows.MessageBox.Show("Load failed!\n");
                 return;
             };
 
-            if (total < 0) {
-                MessageBox.Show("Load failed!\n");
+            if (total <= 0) {
+                System.Windows.MessageBox.Show("Load failed!\n");
                 return;
             }
-            ResetData();
+            var second = reader.ReadLine();
+            int current=0;
+            isNum = int.TryParse(second, out current);
+            if (!isNum)
+            {
+                System.Windows.MessageBox.Show("Load failed!\n");
+                return;
+            };
 
+            ResetData();
+            _currentPosition = current;
             String[] fileNames = new String[total];
 
             for (int i = 0; i < total; i++)
@@ -299,8 +382,10 @@ namespace MultiMediaPlayer
 
             PlayList.ItemsSource = _fullPaths;
 
-            PlayPosition(_currentPosition);
-            MessageBox.Show("Load success!\n");
+            if(_playList.MediaList!=null)
+                PlayPosition(_currentPosition);
+            reader.Close();
+            System.Windows.MessageBox.Show("Load success!\n");
         }
 
 
@@ -342,6 +427,19 @@ namespace MultiMediaPlayer
             _player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
         }
 
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            _hook.KeyUp -= _hook_KeyUp;
+            Unsubscribe();
+            SavePlayList(defaultFileName);
+            
+
+        }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+        }
         private void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             int position = PlayList.SelectedIndex;

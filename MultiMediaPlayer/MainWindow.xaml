@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MultiMediaPlayer"
         mc:Ignorable="d"
         Title="MultiMedia Player" Height="450" Width="800"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded" Closing="Window_Closing" Unloaded="Window_Unloaded">
 
     <Window.Resources>
         <local:NameConverter x:Key="converter"/>
@@ -59,9 +59,9 @@
 
                 <Button Name="SavePlayListButton" Margin="10,0,10,0"
                                 Cursor="Hand" BorderThickness="0" Background="AliceBlue" Click="SavePlayListButton_Click">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" >
                         <Image Width="30" Height="30" Source="drawables/Save.png" Stretch="Fill"/>
-                        <TextBlock Text="Save play list" TextAlignment="Justify" Height="20"/>
+                            <TextBlock Text="Save play list" TextAlignment="Justify" Height="20"/>
                     </StackPanel>
                 </Button>
 
