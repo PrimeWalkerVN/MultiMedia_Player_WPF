@@ -416,7 +416,55 @@ namespace MultiMediaPlayer
                 temp.Remove(temp[num]);
             }
 
-           // _shufflePositionList.Add(1);
+        }
+
+        private void OnRemoveMedia_Click(object sender, RoutedEventArgs e)
+        {
+            //if (PlayList.SelectedItems.Count > 0)
+            //{
+            //    var hihi = PlayList.Items.IndexOf(PlayList.SelectedItems[0]);
+            //}
+            //// System.Windows.MessageBox.Show(temp.ToString());
+            //for (int i = 0; i < PlayList.Items.Count; ++i)
+            //{
+            //    var item = PlayList.Items.GetItemAt(i);
+            //    //for(int j = 0; j < temp.Count; ++j)
+            //    //{
+            //    // //   if(item[j])
+            //    //}
+            var selectedItem = PlayList.SelectedItems;
+            List<int> t = new List<int>();
+            int a = 0;
+            while(PlayList.SelectedItems.Count > 0)
+            {
+                Object b = PlayList.SelectedItems[a];
+                a++;
+                if (PlayList.Items.IndexOf(b) != _currentPosition)
+                {
+                    t.Add(PlayList.Items.IndexOf(b));
+                }
+                if (a == selectedItem.Count)
+                {
+                    break;
+                }
+            }
+            t.Sort();
+            t.Reverse();
+
+            for (int i = 0; i < t.Count; ++i)
+            {
+                _playList.RemoveAt(t[i]);
+                
+            }
+            _fullPaths.Clear();
+            PlayList.ItemsSource = null;
+            for (int i = 0; i < _playList.MediaList.Length; i++)
+            {
+                var info = new FileInfo(_playList.MediaList[i]);
+                _fullPaths.Add(info);
+            }
+            PlayList.ItemsSource = _fullPaths;
+          
         }
     }
 }

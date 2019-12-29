@@ -88,6 +88,11 @@
                 </StackPanel>
                 <ListView Grid.Row="1" Grid.Column="0" Name="PlayList" SelectionChanged="PlayList_SelectionChanged"
                           Grid.ColumnSpan="2" Margin="0,0,-0.4,-0.2" MouseDoubleClick="PlayList_MouseDoubleClick">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove" Click="OnRemoveMedia_Click"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">

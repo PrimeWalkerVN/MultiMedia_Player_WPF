@@ -19,5 +19,13 @@ namespace MultiMediaPlayer
                 else
                      return MediaList.Length; }
         }
+
+        public void RemoveAt(int pos)
+        {
+            List<String> temp = new List<string>(MediaList);
+            temp.RemoveAt(pos);
+            MediaList = temp.ToArray();
+        }
+
     }
 }
