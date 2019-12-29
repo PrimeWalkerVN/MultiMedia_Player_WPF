@@ -27,7 +27,7 @@ namespace MultiMediaPlayer
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        String defaultFileName = "saved_play_list.txt";
         MediaPlayer _player = new MediaPlayer();
         PlayList _playList = new PlayList();
         int _currentPosition=0;
@@ -98,7 +98,8 @@ namespace MultiMediaPlayer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-           PlayList.ItemsSource = _fullPaths;
+            PlayList.ItemsSource = _fullPaths;
+            LoadPlayList(defaultFileName);
         }
 
 
@@ -106,7 +107,7 @@ namespace MultiMediaPlayer
         {
             if (_player.Source != null)
             {
-               
+
                 if (_player.NaturalDuration.HasTimeSpan == true && !isDraggingSlider)
                 {
                     var currentPos = _player.Position.ToString(@"mm\:ss");
@@ -120,9 +121,14 @@ namespace MultiMediaPlayer
                     sliderDuration.Value = _player.Position.TotalSeconds;
 
                     if (currentPos == duration) {
-                        ForwardButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, ForwardButton));
+                        if (_isLoopOne == true)
+                        {
+                            _timer.Stop();
+                            PlayPosition(_currentPosition);
+                            _timer.Start();
+                        } else
+                            ForwardButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, ForwardButton));
                     }
-
                 }
 
             }
@@ -132,12 +138,18 @@ namespace MultiMediaPlayer
 
         private void PlayPosition(int position)
         {
+            if (_playList.MediaList == null) return;
             _currentPosition = position;
             if (position > _playList.TotalMedia - 1)
-                _currentPosition = 0;  
+                _currentPosition = 0;
             if (position < 0)
                 _currentPosition = _playList.TotalMedia - 1;
-               
+
+            if (!File.Exists(_playList.MediaList[_currentPosition])) {
+                _player.Stop();
+                System.Windows.MessageBox.Show($"{_playList.MediaList[_currentPosition]}.....not exists");
+            }
+
             _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
             _player.Play();
             _isPlaying = true;
@@ -180,22 +192,40 @@ namespace MultiMediaPlayer
 
             if (op.ShowDialog() == true)
             {
-                
-                _playList.MediaList = op.FileNames;
+                if (_playList.MediaList != null) {
+                    List<string> myCollection = new List<string>();
+                    string[] filenames = op.FileNames;
 
+                    for (int i = 0; i < _playList.TotalMedia; i++)
+                    {
+                        myCollection.Add(_playList.MediaList[i]);
+                    }
+
+                    for (int i = 0; i < filenames.Length; i++)
+                    {
+                        myCollection.Add(filenames[i]);
+                    }
+
+                    _playList.MediaList = myCollection.ToArray();
+
+                }
+                else 
+                    _playList.MediaList = op.FileNames;
+    
                 for (int i = 0; i < _playList.TotalMedia; i++)
                 {
                     _mediaPositionList.Add(i);
                 }
-
                 ShuffleModeFunc();
-
+                _fullPaths.Clear();
                 //Add to array to display into listview
                 for (int i = 0; i < _playList.MediaList.Length; i++)
                 {
                     var info = new FileInfo(_playList.MediaList[i]);
                     _fullPaths.Add(info);
                 }
+
+                PlayList.ItemsSource = _fullPaths;
                 PlayPosition(_currentPosition);
                 return;
             }
@@ -218,11 +248,11 @@ namespace MultiMediaPlayer
             else {
                 _player.Pause();
                 setImagePlay(_playUri);
-               
+
             }
 
             _isPlaying = !_isPlaying;
-               
+
         }
 
         private void setImagePlay(Uri uri) {
@@ -233,6 +263,7 @@ namespace MultiMediaPlayer
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
+
             _timer.Stop();
             if (_isShuffle == true)
             {
@@ -251,7 +282,7 @@ namespace MultiMediaPlayer
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
-        {     
+        {
             _player.Stop();
             setImagePlay(_playUri);
             _isPlaying = false;
@@ -273,56 +304,135 @@ namespace MultiMediaPlayer
                 PlayPosition(_currentPosition + 1);
             }
             _timer.Start();
-           
+
         }
 
 
         private void LoadPlayListButton_Click(object sender, RoutedEventArgs e)
         {
+            var screen = new Microsoft.Win32.OpenFileDialog();
+            screen.DefaultExt = "txt";
+            screen.Filter = "Playlist Files|*.txt";
+            if (screen.ShowDialog() == true)
+            {
+                LoadPlayList(screen.FileName);
+            }
+            else {
+                System.Windows.MessageBox.Show("Load failed!\n");
+            }
 
         }
 
         private void SavePlayListButton_Click(object sender, RoutedEventArgs e)
         {
-            
-                    
-                string presetFolderPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string presetFilePath = presetFolderPath + @"\" + ".txt";
+            if (_playList.MediaList == null) return;
+            Microsoft.Win32.SaveFileDialog saveFile = new Microsoft.Win32.SaveFileDialog();
 
-                if (!Directory.Exists(presetFolderPath)) Directory.CreateDirectory(presetFolderPath);
-
-                if (!File.Exists(presetFilePath))
-                {
-                    using (StreamWriter sw = File.CreateText(presetFilePath))
-                    {
-                        foreach (PlayList pl in PlayList.Items)
-                        {
-                            string mediaName = $"{pl.MediaList}";
-                            sw.WriteLine(mediaName);
-                        }
-                    }
-                    System.Windows.MessageBox.Show($"PlayList saved in {presetFilePath}");
-                }
-                else
-
-                {
-                    using (StreamWriter sw = File.AppendText(presetFilePath))
-                    {
-                        foreach (PlayList pl in PlayList.Items)
-                        {
-                            string methodTemplate = $"{pl.MediaList}";
-                            sw.WriteLine(methodTemplate);
-                        }
-                    }
-                    System.Windows.MessageBox.Show($"Preset saved in {presetFilePath}");
-                }
+            saveFile.DefaultExt = "txt";
+            saveFile.Filter = "Playlist Files|*.txt";
+            if (saveFile.ShowDialog() == true)
+            {
+                SavePlayList(saveFile.FileName);
+                return;
+            }
         }
+
+        private void SavePlayList(String fileName) {
+
+            if (_playList.MediaList == null) return;
+
+            var writer = new StreamWriter(fileName);
+
+            writer.WriteLine(_playList.TotalMedia);
+            writer.WriteLine(_currentPosition); 
+
+            for (int i = 0; i < _playList.TotalMedia; i++)
+            {
+                writer.WriteLine(_playList.MediaList[i]);
+            }
+
+            writer.Close();
+
+            System.Windows.MessageBox.Show("PlayList is saved");
+
+        }
+
+        private void LoadPlayList(String fileName) {
+            if (!File.Exists(fileName)) return;
+
+            StreamReader reader = new StreamReader(fileName);
+            var firstLine = reader.ReadLine();
+            int total = 0;
+            bool isNum = int.TryParse(firstLine, out total);
+            if (!isNum){
+                System.Windows.MessageBox.Show("Load failed!\n");
+                return;
+            };
+
+            if (total <= 0) {
+                System.Windows.MessageBox.Show("Load failed!\n");
+                return;
+            }
+            var second = reader.ReadLine();
+            int current=0;
+            isNum = int.TryParse(second, out current);
+            if (!isNum)
+            {
+                System.Windows.MessageBox.Show("Load failed!\n");
+                return;
+            };
+
+            ResetData();
+            _currentPosition = current;
+            String[] fileNames = new String[total];
+
+            for (int i = 0; i < total; i++)
+            {
+                fileNames[i] = reader.ReadLine();
+                _mediaPositionList.Add(i);
+            }
+
+            _playList.MediaList = fileNames;
+
+            ShuffleModeFunc();
+
+            //Add to array to display into listview
+            for (int i = 0; i < _playList.MediaList.Length; i++)
+            {
+                var info = new FileInfo(_playList.MediaList[i]);
+                _fullPaths.Add(info);
+            }
+
+            PlayList.ItemsSource = _fullPaths;
+
+            if(_playList.MediaList!=null)
+                PlayPosition(_currentPosition);
+            reader.Close();
+            System.Windows.MessageBox.Show("Load success!\n");
+        }
+
+
 
         private void NewPlayListButton_Click(object sender, RoutedEventArgs e)
         {
-
+            if (_playList.MediaList == null) return;
+            _player.Stop();
+            ResetData();
+           
         }
 
+        private void ResetData() {
+            _fullPaths.Clear();
+            PlayList.ItemsSource = null;
+            _playList.MediaList = null;
+            _mediaPositionList.Clear();
+            _shufflePositionList.Clear();
+            _currentPosition = 0;
+            _isPlaying = false;
+            _isShuffle = false;
+            _isLoopOne = false;
+           
+        }
 
 
         private void slider_ValueChange(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -347,6 +457,8 @@ namespace MultiMediaPlayer
         {
             _hook.KeyUp -= _hook_KeyUp;
             Unsubscribe();
+            SavePlayList(defaultFileName);
+            
 
         }
 
@@ -368,7 +480,6 @@ namespace MultiMediaPlayer
             else
             {
                 SetImageLoop(_loopUri);
-
             }
 
             _isLoopOne = !_isLoopOne;
