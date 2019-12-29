@@ -120,13 +120,17 @@ namespace MultiMediaPlayer
                     sliderDuration.Maximum = _player.NaturalDuration.TimeSpan.TotalSeconds;
                     sliderDuration.Value = _player.Position.TotalSeconds;
 
-                    if (currentPos == duration) {
+                    if (currentPos.Equals(duration)) {
+                        
                         if (_isLoopOne == true)
                         {
+
                             _timer.Stop();
                             PlayPosition(_currentPosition);
                             _timer.Start();
-                        } else
+
+                        }
+                        else
                             ForwardButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, ForwardButton));
                     }
                 }
@@ -164,7 +168,11 @@ namespace MultiMediaPlayer
                 _currentPosition = 0;
             if (position < 0)
                 _currentPosition = _playList.TotalMedia - 1;
-
+            if (!File.Exists(_playList.MediaList[_currentPosition]))
+            {
+                _player.Stop();
+                System.Windows.MessageBox.Show($"{_playList.MediaList[_currentPosition]}.....not exists");
+            }
             _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
             _player.Play();
             _isPlaying = true;
@@ -291,6 +299,7 @@ namespace MultiMediaPlayer
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
             _timer.Stop();
+            _player.Position = TimeSpan.FromSeconds(0);
             if (_isShuffle == true)
             {
                 PlayShuffle(_shufflePositionList[_mediaPositionList[_shufflePositionList[_shufflePos]]]);
@@ -531,18 +540,6 @@ namespace MultiMediaPlayer
 
         private void OnRemoveMedia_Click(object sender, RoutedEventArgs e)
         {
-            //if (PlayList.SelectedItems.Count > 0)
-            //{
-            //    var hihi = PlayList.Items.IndexOf(PlayList.SelectedItems[0]);
-            //}
-            //// System.Windows.MessageBox.Show(temp.ToString());
-            //for (int i = 0; i < PlayList.Items.Count; ++i)
-            //{
-            //    var item = PlayList.Items.GetItemAt(i);
-            //    //for(int j = 0; j < temp.Count; ++j)
-            //    //{
-            //    // //   if(item[j])
-            //    //}
             var selectedItem = PlayList.SelectedItems;
             List<int> t = new List<int>();
             int a = 0;
