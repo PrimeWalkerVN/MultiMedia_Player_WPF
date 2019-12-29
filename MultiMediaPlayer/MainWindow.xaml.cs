@@ -187,22 +187,40 @@ namespace MultiMediaPlayer
 
             if (op.ShowDialog() == true)
             {
+                if (_playList.MediaList != null) {
+                    List<string> myCollection = new List<string>();
+                    string[] filenames = op.FileNames;
 
-                _playList.MediaList = op.FileNames;
+                    for (int i = 0; i < _playList.TotalMedia; i++)
+                    {
+                        myCollection.Add(_playList.MediaList[i]);
+                    }
 
+                    for (int i = 0; i < filenames.Length; i++)
+                    {
+                        myCollection.Add(filenames[i]);
+                    }
+
+                    _playList.MediaList = myCollection.ToArray();
+
+                }
+                else 
+                    _playList.MediaList = op.FileNames;
+    
                 for (int i = 0; i < _playList.TotalMedia; i++)
                 {
                     _mediaPositionList.Add(i);
                 }
-
                 ShuffleModeFunc();
-
+                _fullPaths.Clear();
                 //Add to array to display into listview
                 for (int i = 0; i < _playList.MediaList.Length; i++)
                 {
                     var info = new FileInfo(_playList.MediaList[i]);
                     _fullPaths.Add(info);
                 }
+
+                PlayList.ItemsSource = _fullPaths;
                 PlayPosition(_currentPosition);
                 return;
             }
@@ -393,6 +411,7 @@ namespace MultiMediaPlayer
         private void NewPlayListButton_Click(object sender, RoutedEventArgs e)
         {
             if (_playList.MediaList == null) return;
+            _player.Stop();
             ResetData();
            
         }
@@ -407,6 +426,7 @@ namespace MultiMediaPlayer
             _isPlaying = false;
             _isShuffle = false;
             _isLoopOne = false;
+           
         }
 
 
