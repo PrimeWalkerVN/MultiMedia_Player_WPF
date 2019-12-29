@@ -145,6 +145,11 @@ namespace MultiMediaPlayer
             if (position < 0)
                 _currentPosition = _playList.TotalMedia - 1;
 
+            if (!File.Exists(_playList.MediaList[_currentPosition])) {
+                _player.Stop();
+                System.Windows.MessageBox.Show($"{_playList.MediaList[_currentPosition]}.....not exists");
+            }
+
             _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
             _player.Play();
             _isPlaying = true;
