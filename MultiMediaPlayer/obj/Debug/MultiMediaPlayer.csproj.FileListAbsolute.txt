@@ -1,0 +1,16 @@
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\bin\Debug\MultiMediaPlayer.exe.config
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\bin\Debug\MultiMediaPlayer.exe
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\bin\Debug\MultiMediaPlayer.pdb
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer.csprojAssemblyReference.cache
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MainWindow.g.cs
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\App.g.cs
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\GeneratedInternalTypeHelper.g.cs
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer_MarkupCompile.cache
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer_MarkupCompile.lref
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\App.baml
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MainWindow.baml
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer.g.resources
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer.Properties.Resources.resources
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer.csproj.GenerateResource.cache
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer.exe
+E:\IDE\HKV\C#\WPF\MultiMediaPlayer\MultiMediaPlayer\obj\Debug\MultiMediaPlayer.pdb

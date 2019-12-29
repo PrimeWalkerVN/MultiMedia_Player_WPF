@@ -26,10 +26,11 @@ namespace MultiMediaPlayer
     {
 
         MediaPlayer _player = new MediaPlayer();
+        PlayList _playList = new PlayList();
+        int _currentPosition=0;
         public bool _isPlaying = false;
         BindingList<FileInfo> _fullPaths = new BindingList<FileInfo>();
         DispatcherTimer _timer;
-
 
         public MainWindow()
         {
@@ -67,6 +68,15 @@ namespace MultiMediaPlayer
                 Title = "No file selected...";
         }
 
+        private void PlayPosition(int position)
+        {
+            if (position > _playList.TotalMedia || position < 0) return;
+            _currentPosition = position;
+            _player.Open(new Uri(_playList.MediaList[position], UriKind.Absolute));
+            _player.Play();
+            _isPlaying = true;
+        }
+
         private void PlayList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -84,21 +94,17 @@ namespace MultiMediaPlayer
 
             if (op.ShowDialog() == true)
             {
-                String[] fileNames;
-                fileNames = op.FileNames;
+                _playList.MediaList = op.FileNames;
 
                 //Add to array to display into listview
-                for (int i = 0; i < fileNames.Length; i++)
+                for (int i = 0; i < _playList.MediaList.Length; i++)
                 {
-                    var info = new FileInfo(fileNames[i]);
+                    var info = new FileInfo(_playList.MediaList[i]);
                     _fullPaths.Add(info);
                 }
                 
                 MessageBox.Show($"Load successful! ....\n");
-                _player.Open(new Uri(fileNames[0], UriKind.Absolute));
-
-                
-               
+                PlayPosition(_currentPosition);
                 return;
             }
             else
@@ -108,7 +114,6 @@ namespace MultiMediaPlayer
             }
         }
 
-       
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
@@ -122,12 +127,11 @@ namespace MultiMediaPlayer
 
             _isPlaying = !_isPlaying;
                
-
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-
+            PlayPosition(_currentPosition-1);
         }
 
         private void ModeButton_Click(object sender, RoutedEventArgs e)
@@ -143,7 +147,7 @@ namespace MultiMediaPlayer
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-
+            PlayPosition(_currentPosition + 1);
         }
 
 
