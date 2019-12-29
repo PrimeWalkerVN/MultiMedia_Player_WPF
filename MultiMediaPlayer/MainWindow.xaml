@@ -8,8 +8,11 @@
         Title="MultiMedia Player" Height="450" Width="800"
         Loaded="Window_Loaded">
 
-    <Grid>
+    <Window.Resources>
+        <local:NameConverter x:Key="converter"/>
+    </Window.Resources>
 
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -83,12 +86,12 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
-                <ListView Grid.Row="1" Grid.Column="0" Name="PlayList" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                          SelectionChanged="PlayList_SelectionChanged" Grid.ColumnSpan="2" Margin="0,0,-0.4,-0.2" >
+                <ListView Grid.Row="1" Grid.Column="0" Name="PlayList" SelectionChanged="PlayList_SelectionChanged"
+                          Grid.ColumnSpan="2" Margin="0,0,-0.4,-0.2">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Name="Decription" Text="{Binding Name}"/>
+                                <TextBlock Name="Decription" Text="{Binding Name,Converter={StaticResource converter}}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -128,9 +131,9 @@
                     <ColumnDefinition Width="8*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Name="textBlockProgress" Text="00:00:00" VerticalAlignment="Center" Foreground="DarkRed" Margin="10,0,0,0"/>
+                <TextBlock Grid.Column="0" Name="CurrentTime" Text="00:00" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DarkRed" Margin="10,0,0,0"/>
                 <Slider Grid.Column="1" Name="sliderDuration" LargeChange="10" IsEnabled="True" Minimum="0" Maximum="100" Margin="3" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Name="textBlockDuration" Text="00:00:00" Foreground="RoyalBlue" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <TextBlock Grid.Column="2" Name="DurationTime" Text="00:00" Foreground="RoyalBlue" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0"/>
             </Grid>
 
             <!-- Media Button -->
