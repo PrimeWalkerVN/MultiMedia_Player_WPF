@@ -87,7 +87,7 @@
                     </Button>
                 </StackPanel>
                 <ListView Grid.Row="1" Grid.Column="0" Name="PlayList" SelectionChanged="PlayList_SelectionChanged"
-                          Grid.ColumnSpan="2" Margin="0,0,-0.4,-0.2">
+                          Grid.ColumnSpan="2" Margin="0,0,-0.4,-0.2" MouseDoubleClick="PlayList_MouseDoubleClick">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
@@ -145,9 +145,9 @@
             <!-- Media Button -->
             <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
 
-                <Button Style="{StaticResource TransparentStyle}" Name="ModeButton" Margin="5,0,5,0"
-                                Cursor="Hand" BorderThickness="0" Click="ModeButton_Click">
-                    <Image Width="50" Height="50" Source="drawables/shuffle.png" Stretch="Fill"  
+                <Button Style="{StaticResource TransparentStyle}" Name="ModeShuffle" Margin="5,0,5,0"
+                                Cursor="Hand" BorderThickness="0" Click="ModeShuffle_Click">
+                    <Image Name="ShuffleModeImage" Width="50" Height="50" Source="drawables/shuffle_disable.png" Stretch="Fill"  
                            RenderOptions.BitmapScalingMode="HighQuality"
                            />
                 </Button>
@@ -172,6 +172,13 @@
                 <Button Style="{StaticResource TransparentStyle}" Name="ForwardButton" Margin="5,0,5,0"
                                 Cursor="Hand" BorderThickness="0" Click="ForwardButton_Click">
                     <Image Width="50" Height="50" Source="drawables/forward.png" Stretch="Fill"  
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           />
+                </Button>
+
+                <Button Style="{StaticResource TransparentStyle}" Name="LoopModeButton" Margin="5,0,5,0"
+                                Cursor="Hand" BorderThickness="0" Click="LoopModeButton_Click">
+                    <Image Name="LoopModeImage" Width="50" Height="50" Source="drawables/loop.png" Stretch="Fill"  
                            RenderOptions.BitmapScalingMode="HighQuality"
                            />
                 </Button>

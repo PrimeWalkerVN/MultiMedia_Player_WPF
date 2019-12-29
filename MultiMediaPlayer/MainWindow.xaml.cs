@@ -31,7 +31,17 @@ namespace MultiMediaPlayer
         MediaPlayer _player = new MediaPlayer();
         PlayList _playList = new PlayList();
         int _currentPosition=0;
+        int _shufflePos = 0;
+
+        List<int> _mediaPositionList = new List<int>();
+        List<int> _shufflePositionList = new List<int>();
+
+
         public bool _isPlaying = false;
+        public bool _isShuffle = false;
+        public bool _isLoopOne = false;
+
+
         BindingList<FileInfo> _fullPaths = new BindingList<FileInfo>();
         DispatcherTimer _timer;
         public static bool isDraggingSlider = false;
@@ -68,6 +78,11 @@ namespace MultiMediaPlayer
         private Uri _playUri = new Uri(@"drawables/play.png", UriKind.Relative);
         private Uri _pauseUri = new Uri(@"drawables/pause.png", UriKind.Relative);
 
+        private Uri _loopUri = new Uri(@"drawables/loop.png", UriKind.Relative);
+        private Uri _loopOneUri = new Uri(@"drawables/loop_1.png", UriKind.Relative);
+
+        private Uri _shuffleUri = new Uri(@"drawables/shuffle.png", UriKind.Relative);
+        private Uri _disShuffleUri = new Uri(@"drawables/shuffle_disable.png", UriKind.Relative);
 
         public MainWindow()
         {
@@ -104,6 +119,10 @@ namespace MultiMediaPlayer
                     sliderDuration.Maximum = _player.NaturalDuration.TimeSpan.TotalSeconds;
                     sliderDuration.Value = _player.Position.TotalSeconds;
 
+                    if (currentPos == duration) {
+                        ForwardButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, ForwardButton));
+                    }
+
                 }
 
             }
@@ -122,6 +141,22 @@ namespace MultiMediaPlayer
             _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
             _player.Play();
             _isPlaying = true;
+            PlayList.SelectedIndex = _currentPosition;
+            setImagePlay(_pauseUri);
+        }
+
+        private void PlayShuffle(int position)
+        {
+            _currentPosition = position;
+            if (position > _playList.TotalMedia - 1)
+                _currentPosition = 0;
+            if (position < 0)
+                _currentPosition = _playList.TotalMedia - 1;
+
+            _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
+            _player.Play();
+            _isPlaying = true;
+            PlayList.SelectedIndex = _currentPosition;
             setImagePlay(_pauseUri);
         }
 
@@ -147,6 +182,13 @@ namespace MultiMediaPlayer
             {
                 
                 _playList.MediaList = op.FileNames;
+
+                for (int i = 0; i < _playList.TotalMedia; i++)
+                {
+                    _mediaPositionList.Add(i);
+                }
+
+                ShuffleModeFunc();
 
                 //Add to array to display into listview
                 for (int i = 0; i < _playList.MediaList.Length; i++)
@@ -191,12 +233,21 @@ namespace MultiMediaPlayer
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayPosition(_currentPosition-1);
-        }
-
-        private void ModeButton_Click(object sender, RoutedEventArgs e)
-        {
-
+            _timer.Stop();
+            if (_isShuffle == true)
+            {
+                PlayShuffle(_shufflePositionList[_mediaPositionList[_shufflePositionList[_shufflePos]]]);
+                ++_shufflePos;
+                if (_shufflePos > _playList.TotalMedia - 1)
+                    _shufflePos = 0;
+                if (_shufflePos < 0)
+                    _shufflePos = _playList.TotalMedia - 1;
+            }
+            else
+            {
+                PlayPosition(_currentPosition - 1);
+            }
+            _timer.Start();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -208,7 +259,21 @@ namespace MultiMediaPlayer
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayPosition(_currentPosition + 1);
+            _timer.Stop();
+            if (_isShuffle == true)
+            {
+                PlayShuffle(_shufflePositionList[_mediaPositionList[_shufflePositionList[_shufflePos]]]);
+                --_shufflePos;
+                if (_shufflePos > _playList.TotalMedia - 1)
+                    _shufflePos = 0;
+                if (_shufflePos < 0)
+                    _shufflePos = _playList.TotalMedia - 1;
+            }
+            else {
+                PlayPosition(_currentPosition + 1);
+            }
+            _timer.Start();
+           
         }
 
 
@@ -277,6 +342,7 @@ namespace MultiMediaPlayer
             _player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
         }
 
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             _hook.KeyUp -= _hook_KeyUp;
@@ -286,7 +352,71 @@ namespace MultiMediaPlayer
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
+        }
+        private void PlayList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            int position = PlayList.SelectedIndex;
+            PlayPosition(position);
+        }
 
+        private void LoopModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isLoopOne == false)
+            {
+                SetImageLoop(_loopOneUri);
+            }
+            else
+            {
+                SetImageLoop(_loopUri);
+
+            }
+
+            _isLoopOne = !_isLoopOne;
+
+        }
+
+        private void ModeShuffle_Click(object sender, RoutedEventArgs e)
+        {
+           
+            if (_isShuffle == false)
+            {
+                SetImageShuffle(_shuffleUri);
+            }
+            else
+            {
+                SetImageShuffle(_disShuffleUri);
+
+            }
+
+            _isShuffle = !_isShuffle;
+        }
+
+        private void SetImageShuffle(Uri uri) {
+            BitmapImage image = null;
+            image = new BitmapImage(uri);
+            ShuffleModeImage.Source = image;
+        }
+
+        private void SetImageLoop(Uri uri)
+        {
+            BitmapImage image = null;
+            image = new BitmapImage(uri);
+            LoopModeImage.Source = image;
+        }
+
+
+        private void ShuffleModeFunc() {
+
+            Random random = new Random();
+            List<int> temp = new List<int>(_mediaPositionList);
+            while (temp.Count > 0) {
+
+                var num = random.Next(temp.Count);
+                _shufflePositionList.Add(temp[num]);
+                temp.Remove(temp[num]);
+            }
+
+           // _shufflePositionList.Add(1);
         }
     }
 }
