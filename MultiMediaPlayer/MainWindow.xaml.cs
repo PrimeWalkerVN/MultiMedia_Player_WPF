@@ -33,6 +33,9 @@ namespace MultiMediaPlayer
         DispatcherTimer _timer;
         public static bool isDraggingSlider = false;
 
+        private Uri _playUri = new Uri(@"drawables/play.png", UriKind.Relative);
+        private Uri _pauseUri = new Uri(@"drawables/pause.png", UriKind.Relative);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -76,11 +79,16 @@ namespace MultiMediaPlayer
 
         private void PlayPosition(int position)
         {
-            if (position > _playList.TotalMedia || position < 0) return;
             _currentPosition = position;
-            _player.Open(new Uri(_playList.MediaList[position], UriKind.Absolute));
+            if (position > _playList.TotalMedia - 1)
+                _currentPosition = 0;  
+            if (position < 0)
+                _currentPosition = _playList.TotalMedia - 1;
+               
+            _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
             _player.Play();
             _isPlaying = true;
+            setImagePlay(_pauseUri);
         }
 
         private void PlayList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -90,6 +98,8 @@ namespace MultiMediaPlayer
 
         private void AddMusicButton_Click(object sender, RoutedEventArgs e)
         {
+            setImagePlay(_playUri);
+            _isPlaying = false;
             OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             op.Title = "Select a picture";
             op.Filter = "All Media Files|*.wav;*.aac;*.wma;*.wmv;*.avi;*.mpg;*.mpeg;" +
@@ -100,6 +110,7 @@ namespace MultiMediaPlayer
 
             if (op.ShowDialog() == true)
             {
+                
                 _playList.MediaList = op.FileNames;
 
                 //Add to array to display into listview
@@ -109,7 +120,6 @@ namespace MultiMediaPlayer
                     _fullPaths.Add(info);
                 }
                 
-                MessageBox.Show($"Load successful! ....\n");
                 PlayPosition(_currentPosition);
                 return;
             }
@@ -123,16 +133,26 @@ namespace MultiMediaPlayer
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_playList.MediaList == null) _isPlaying = true;
             if (_isPlaying == false)
             {
                 _player.Play();
+                setImagePlay(_pauseUri);
             }
             else {
                 _player.Pause();
+                setImagePlay(_playUri);
+               
             }
 
             _isPlaying = !_isPlaying;
                
+        }
+
+        private void setImagePlay(Uri uri) {
+            BitmapImage image = null;
+            image = new BitmapImage(uri);
+            PlayButtonImage.Source = image;
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
@@ -147,8 +167,9 @@ namespace MultiMediaPlayer
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {     
-                _player.Stop();
-                _isPlaying = false;
+            _player.Stop();
+            setImagePlay(_playUri);
+            _isPlaying = false;
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)

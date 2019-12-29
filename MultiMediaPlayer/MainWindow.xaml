@@ -159,7 +159,7 @@
                 </Button>
                 <Button Style="{StaticResource TransparentStyle}" Name="PlayButton" Margin="5,0,5,0"
                                 Cursor="Hand" BorderThickness="0" Click="PlayButton_Click">
-                    <Image Width="50" Height="50" Source="drawables/play.png" Stretch="Fill"
+                    <Image x:Name="PlayButtonImage" Width="50" Height="50" Source="drawables/play.png" Stretch="Fill"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Button>
 
