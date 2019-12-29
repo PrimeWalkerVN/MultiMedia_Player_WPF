@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Gma.System.MouseKeyHook;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -32,7 +34,27 @@ namespace MultiMediaPlayer
         BindingList<FileInfo> _fullPaths = new BindingList<FileInfo>();
         DispatcherTimer _timer;
         public static bool isDraggingSlider = false;
+        private IKeyboardMouseEvents _hook;
 
+        public void Subscribe()
+        {
+            _hook = Hook.GlobalEvents();
+            _hook.KeyUp += _hook_KeyUp;
+        }
+
+        public void Unsubscribe()
+        {
+            _hook.KeyUp -= _hook_KeyUp;
+            _hook.Dispose();
+        }
+
+        private void _hook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.Control && e.Shift && (e.KeyCode == Keys.E))
+            {
+                PlayButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, PlayButton));
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -42,6 +64,7 @@ namespace MultiMediaPlayer
             _timer.Tick += timer_Tick;
             _timer.Start();
 
+            Subscribe();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -90,7 +113,7 @@ namespace MultiMediaPlayer
 
         private void AddMusicButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
+            Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             op.Title = "Select a picture";
             op.Filter = "All Media Files|*.wav;*.aac;*.wma;*.wmv;*.avi;*.mpg;*.mpeg;" +
                 "*.m1v;*.mp2;*.mp3;*.mpa;*.mpe;*.m3u;*.mp4;*.mov;*.3g2;*.3gp2;*.3gp;*.3gpp;*.m4a;*.cda;*.aif;*.aifc;*.aiff;*.mid;*.midi;" +
@@ -108,14 +131,14 @@ namespace MultiMediaPlayer
                     var info = new FileInfo(_playList.MediaList[i]);
                     _fullPaths.Add(info);
                 }
-                
-                MessageBox.Show($"Load successful! ....\n");
+
+               // System.Windows.MessageBox.Show($"Load successful! ....\n");
                 PlayPosition(_currentPosition);
                 return;
             }
             else
             {
-                MessageBox.Show("Load failed!\n");
+                System.Windows.MessageBox.Show("Load failed!\n");
                 return;
             }
         }
@@ -189,6 +212,18 @@ namespace MultiMediaPlayer
         {
             isDraggingSlider = false;
             _player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            _hook.KeyUp -= _hook_KeyUp;
+            Unsubscribe();
+
+        }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
