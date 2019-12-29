@@ -31,6 +31,7 @@ namespace MultiMediaPlayer
         public bool _isPlaying = false;
         BindingList<FileInfo> _fullPaths = new BindingList<FileInfo>();
         DispatcherTimer _timer;
+        public static bool isDraggingSlider = false;
 
         public MainWindow()
         {
@@ -54,13 +55,18 @@ namespace MultiMediaPlayer
             if (_player.Source != null)
             {
                
-                if (_player.NaturalDuration.HasTimeSpan == true)
+                if (_player.NaturalDuration.HasTimeSpan == true && !isDraggingSlider)
                 {
                     var currentPos = _player.Position.ToString(@"mm\:ss");
                     var duration = _player.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
                     Title = String.Format($"{currentPos} / {duration}");
                     CurrentTime.Text = currentPos;
                     DurationTime.Text = duration;
+
+                    sliderDuration.Minimum = 0;
+                    sliderDuration.Maximum = _player.NaturalDuration.TimeSpan.TotalSeconds;
+                    sliderDuration.Value = _player.Position.TotalSeconds;
+
                 }
 
             }
@@ -164,6 +170,25 @@ namespace MultiMediaPlayer
         private void NewPlayListButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+
+
+        private void slider_ValueChange(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            CurrentTime.Text = TimeSpan.FromSeconds(sliderDuration.Value).ToString(@"mm\:ss");
+            _player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
+        }
+
+        private void sliderProcess_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+            isDraggingSlider = true;
+        }
+
+        private void sliderProcess_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            isDraggingSlider = false;
+            _player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
         }
     }
 }
