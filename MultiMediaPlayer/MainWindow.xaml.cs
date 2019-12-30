@@ -501,6 +501,7 @@ namespace MultiMediaPlayer
             if (_isShuffle == false)
             {
                 SetImageShuffle(_shuffleUri);
+                ShuffleModeFunc();
             }
             else
             {
@@ -526,7 +527,7 @@ namespace MultiMediaPlayer
 
 
         private void ShuffleModeFunc() {
-
+            _shufflePositionList.Clear();
             Random random = new Random();
             List<int> temp = new List<int>(_mediaPositionList);
             while (temp.Count > 0) {
@@ -562,7 +563,12 @@ namespace MultiMediaPlayer
             for (int i = 0; i < t.Count; ++i)
             {
                 _playList.RemoveAt(t[i]);
-                
+                _mediaPositionList.RemoveAt(t[i]);
+            }
+
+            if (_isShuffle)
+            {
+                ShuffleModeFunc();
             }
             _fullPaths.Clear();
             PlayList.ItemsSource = null;
