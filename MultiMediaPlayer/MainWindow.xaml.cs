@@ -15,10 +15,12 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using XamlAnimatedGif;
 
 namespace MultiMediaPlayer
 {
@@ -28,6 +30,7 @@ namespace MultiMediaPlayer
     public partial class MainWindow : Window
     {
         #region Define local
+
         String defaultFileName = "saved_play_list.txt";
         MediaPlayer _player = new MediaPlayer();
         PlayList _playList = new PlayList();
@@ -41,6 +44,7 @@ namespace MultiMediaPlayer
         public bool _isPlaying = false;
         public bool _isShuffle = false;
         public bool _isLoopOne = false;
+        public bool _isMute = false;
 
         private Uri _playUri = new Uri(@"drawables/play.png", UriKind.Relative);
         private Uri _pauseUri = new Uri(@"drawables/pause.png", UriKind.Relative);
@@ -50,6 +54,9 @@ namespace MultiMediaPlayer
 
         private Uri _shuffleUri = new Uri(@"drawables/shuffle.png", UriKind.Relative);
         private Uri _disShuffleUri = new Uri(@"drawables/shuffle_disable.png", UriKind.Relative);
+
+        private Uri _volumeUri = new Uri(@"drawables/volume.png", UriKind.Relative);
+        private Uri _muteUri = new Uri(@"drawables/mute.png", UriKind.Relative);
 
 
 
@@ -94,7 +101,7 @@ namespace MultiMediaPlayer
         public MainWindow()
         {
             InitializeComponent();
-
+            
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += timer_Tick;
@@ -110,6 +117,7 @@ namespace MultiMediaPlayer
             _isPlaying = false;
             setImagePlay(_playUri);
             _player.Stop();
+            
         }
 
 
@@ -152,6 +160,16 @@ namespace MultiMediaPlayer
         #endregion
 
         #region Method
+
+        private void PauseMyGif() {
+            var controller = AnimationBehavior.GetAnimator(myGif);
+            controller.Pause();
+        }
+        private void RepeatMyGif()
+        {
+            var controller = AnimationBehavior.GetAnimator(myGif);
+            controller.Play();
+        }
         private void PlayPosition(int position)
         {
             _player.Position = TimeSpan.FromSeconds(0);
@@ -173,6 +191,7 @@ namespace MultiMediaPlayer
             _isPlaying = true;
             PlayList.SelectedIndex = _currentPosition;
             setImagePlay(_pauseUri);
+           
         }
 
         private void PlayShuffle(int position)
@@ -194,6 +213,7 @@ namespace MultiMediaPlayer
             _isPlaying = true;
             PlayList.SelectedIndex = _currentPosition;
             setImagePlay(_pauseUri);
+            
         }
 
 
@@ -221,6 +241,7 @@ namespace MultiMediaPlayer
 
         private void LoadPlayList(String fileName)
         {
+            
             if (!File.Exists(fileName)) return;
 
             StreamReader reader = new StreamReader(fileName);
@@ -305,6 +326,13 @@ namespace MultiMediaPlayer
             LoopModeImage.Source = image;
         }
 
+        private void SetImageVolume(Uri uri)
+        {
+            BitmapImage image = null;
+            image = new BitmapImage(uri);
+            VolumeModeImage.Source = image;
+        }
+
         private void setImagePlay(Uri uri)
         {
             BitmapImage image = null;
@@ -386,6 +414,7 @@ namespace MultiMediaPlayer
 
                 PlayList.ItemsSource = _fullPaths;
                 PlayPosition(_currentPosition);
+                RepeatMyGif();
                 return;
             }
             else
@@ -402,10 +431,12 @@ namespace MultiMediaPlayer
             if (_isPlaying == false)
             {
                 _player.Play();
+                RepeatMyGif();
                 setImagePlay(_pauseUri);
             }
             else {
                 _player.Pause();
+                PauseMyGif();
                 setImagePlay(_playUri);
 
             }
@@ -438,6 +469,7 @@ namespace MultiMediaPlayer
         {
             _player.Stop();
             setImagePlay(_playUri);
+            PauseMyGif();
             _isPlaying = false;
         }
 
@@ -496,6 +528,8 @@ namespace MultiMediaPlayer
         {
             if (_playList.MediaList == null) return;
             _player.Stop();
+            setImagePlay(_playUri);
+            PauseMyGif();
             ResetData();
            
         }
@@ -609,6 +643,22 @@ namespace MultiMediaPlayer
             }
             PlayList.ItemsSource = _fullPaths;
           
+        }
+
+        private void myGif_Loaded(object sender, RoutedEventArgs e)
+        {
+            PauseMyGif();
+        }
+
+        private void VolumeModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isMute == true)
+            {
+                SetImageVolume(_volumeUri);
+            }else {
+                SetImageVolume(_muteUri);
+            }
+            _isMute = !_isMute;
         }
     }
     #endregion
