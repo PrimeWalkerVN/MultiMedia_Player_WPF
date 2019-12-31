@@ -107,6 +107,9 @@ namespace MultiMediaPlayer
         {
             PlayList.ItemsSource = _fullPaths;
             LoadPlayList(defaultFileName);
+            _isPlaying = false;
+            setImagePlay(_playUri);
+            _player.Stop();
         }
 
 
@@ -270,7 +273,7 @@ namespace MultiMediaPlayer
             if (_playList.MediaList != null)
                 PlayPosition(_currentPosition);
             reader.Close();
-            System.Windows.MessageBox.Show("Load success!\n");
+          
         }
 
         private void ResetData()
