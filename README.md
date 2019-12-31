@@ -3,7 +3,7 @@
 * 1712800 Mai Huy Thông
 > Chương trình được thiết kế bằng **WPF** dựa trên nền tảng **ngôn ngữ lập trình C#**. Người chơi chọn một tập tin hoặc nhiều tập tin nhạc khác nhau, chương trình hỗ trợ phát nhạc với các chức năng cơ bản của music media player<br>
 
-<br> **Video demo: []()**
+<br> **Video demo: [https://youtu.be/xx4QaaIEAxs](https://youtu.be/xx4QaaIEAxs)**
 
 ## **Những chức năng đã làm được**
 
@@ -30,4 +30,4 @@ Các chức năng theo yêu cầu của project và điểm tự đánh giá:
 ----
 * Có thể thêm nhiều tập tin nhạc vào danh sách nhạc mà người dùng đang chơi
 * Có thêm thanh slider có thể tua nhạc
-* Các chức năng đã được test qua, chi tiết có thể xem ở video demo: [Click here]()
+* Các chức năng đã được test qua, chi tiết có thể xem ở video demo: [Click here](https://youtu.be/xx4QaaIEAxs)
