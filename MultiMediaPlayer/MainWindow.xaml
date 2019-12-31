@@ -17,6 +17,11 @@
 
     <Window.Resources>
         <local:NameConverter x:Key="converter"/>
+        <Storyboard x:Key="Storyboard" BeginTime="00:00:00" Duration="00:00:05" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="RotateImage"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" 
+                             From="0" To="360" Duration="00:00:05"/>
+        </Storyboard>
     </Window.Resources>
 
     <Grid>

@@ -444,7 +444,8 @@ namespace MultiMediaPlayer
                 setImagePlay(_playUri);
 
             }
-
+            ((Storyboard)Resources["Storyboard"]).Begin();
+            // stop :  ((Storyboard)Resources["Storyboard"]).Pause();
             _isPlaying = !_isPlaying;
 
         }
