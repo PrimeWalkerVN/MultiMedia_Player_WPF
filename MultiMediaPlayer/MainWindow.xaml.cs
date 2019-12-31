@@ -190,6 +190,7 @@ namespace MultiMediaPlayer
             _player.Play();
             _isPlaying = true;
             PlayList.SelectedIndex = _currentPosition;
+            PlayList.ScrollIntoView(PlayList.SelectedItem);
             setImagePlay(_pauseUri);
            
         }
@@ -447,7 +448,7 @@ namespace MultiMediaPlayer
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-
+            RepeatMyGif();
             _timer.Stop();
             if (_isShuffle == true)
             {
@@ -469,12 +470,13 @@ namespace MultiMediaPlayer
         {
             _player.Stop();
             setImagePlay(_playUri);
-            PauseMyGif();
+            if(_isPlaying==true)PauseMyGif();
             _isPlaying = false;
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
+            RepeatMyGif();
             _timer.Stop();
             if (_isShuffle == true)
             {
@@ -569,6 +571,7 @@ namespace MultiMediaPlayer
         {
             int position = PlayList.SelectedIndex;
             PlayPosition(position);
+            RepeatMyGif();
         }
 
         private void LoopModeButton_Click(object sender, RoutedEventArgs e)
