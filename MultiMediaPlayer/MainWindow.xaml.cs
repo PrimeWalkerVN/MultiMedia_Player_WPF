@@ -36,6 +36,7 @@ namespace MultiMediaPlayer
         PlayList _playList = new PlayList();
         int _currentPosition=0;
         int _shufflePos = 0;
+        double _currentVolumeValue = 75.0;
 
         List<int> _mediaPositionList = new List<int>();
         List<int> _shufflePositionList = new List<int>();
@@ -188,6 +189,8 @@ namespace MultiMediaPlayer
 
             _player.Open(new Uri(_playList.MediaList[_currentPosition], UriKind.Absolute));
             _player.Play();
+            _player.Volume = _currentVolumeValue;
+            VolumeSlider.Value = _currentVolumeValue;
             _isPlaying = true;
             PlayList.SelectedIndex = _currentPosition;
             setImagePlay(_pauseUri);
@@ -627,9 +630,12 @@ namespace MultiMediaPlayer
             for (int i = 0; i < t.Count; ++i)
             {
                 _playList.RemoveAt(t[i]);
-                _mediaPositionList.RemoveAt(t[i]);
             }
-
+            _mediaPositionList.Clear();
+            for (int i = 0; i < _playList.TotalMedia; i++)
+            {
+                _mediaPositionList.Add(i);
+            }
             if (_isShuffle)
             {
                 ShuffleModeFunc();
@@ -652,13 +658,38 @@ namespace MultiMediaPlayer
 
         private void VolumeModeButton_Click(object sender, RoutedEventArgs e)
         {
+            var button = sender as System.Windows.Controls.Button;
+            //var value = VolumeSlider.Value;
             if (_isMute == true)
             {
+                _player.Volume = _currentVolumeValue;
+                VolumeSlider.Value = _currentVolumeValue;
                 SetImageVolume(_volumeUri);
-            }else {
+            }
+            else
+            {
+                _player.Volume = 0;
+                VolumeSlider.Value = 0;
                 SetImageVolume(_muteUri);
             }
             _isMute = !_isMute;
+        }
+
+        private void VolumeSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = (sender as Slider).Value;
+            _player.Volume = value / 100;
+
+            if(value != 0)
+            {
+                _currentVolumeValue = value;
+                //_isMute = true;
+            }
+            else
+            {
+                //_currentVolumeValue = value;
+                //_isMute = false;
+            }
         }
     }
     #endregion

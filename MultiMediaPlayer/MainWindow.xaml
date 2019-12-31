@@ -215,7 +215,7 @@
                            />
                     </Button>
 
-                    <Slider Name="VolumeSlider" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Maximum="100" />
+                    <Slider Name="VolumeSlider" IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Maximum="100" ValueChanged="VolumeSliderChanged" />
                 </StackPanel>
             </Grid>
 
