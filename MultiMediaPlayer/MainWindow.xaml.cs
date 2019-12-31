@@ -377,7 +377,7 @@ namespace MultiMediaPlayer
 
             Microsoft.Win32.OpenFileDialog op = new Microsoft.Win32.OpenFileDialog();
             setImagePlay(_playUri);
-            _isPlaying = false;
+            //_isPlaying = false;
             op.Title = "Select a picture";
             op.Filter = "All Media Files|*.wav;*.aac;*.wma;*.wmv;*.avi;*.mpg;*.mpeg;" +
                 "*.m1v;*.mp2;*.mp3;*.mpa;*.mpe;*.m3u;*.mp4;*.mov;*.3g2;*.3gp2;*.3gp;*.3gpp;*.m4a;*.cda;*.aif;*.aifc;*.aiff;*.mid;*.midi;" +
@@ -422,7 +422,7 @@ namespace MultiMediaPlayer
                 }
 
                 PlayList.ItemsSource = _fullPaths;
-                PlayPosition(_currentPosition);
+                if (_isPlaying == false)PlayPosition(_currentPosition);
                 ((Storyboard)Resources["Storyboard"]).Resume();
                 RepeatMyGif();
                 return;
@@ -545,6 +545,8 @@ namespace MultiMediaPlayer
             _player.Stop();
             setImagePlay(_playUri);
             PauseMyGif();
+            ((Storyboard)Resources["Storyboard"]).Pause();
+
             ResetData();
            
         }
