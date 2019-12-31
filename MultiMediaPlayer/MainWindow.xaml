@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Title="MultiMedia Player" Height="450" Width="800"
         ResizeMode="CanMinimize"
-        Icon="drawables/spotify.png"
+        Icon="drawables/music-player.png"
         WindowStartupLocation="CenterScreen"
         xmlns:gif ="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
         Loaded="Window_Loaded" Closing="Window_Closing" Unloaded="Window_Unloaded">

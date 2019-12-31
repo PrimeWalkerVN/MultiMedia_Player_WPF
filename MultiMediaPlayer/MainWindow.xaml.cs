@@ -117,6 +117,8 @@ namespace MultiMediaPlayer
             LoadPlayList(defaultFileName);
             _isPlaying = false;
             setImagePlay(_playUri);
+            ((Storyboard)Resources["Storyboard"]).Begin();
+            ((Storyboard)Resources["Storyboard"]).Pause();
             _player.Stop();
             
         }
@@ -168,6 +170,8 @@ namespace MultiMediaPlayer
         }
         private void RepeatMyGif()
         {
+            Uri abc = new Uri(@"images/hangfel.gif",UriKind.Relative);
+            AnimationBehavior.SetSourceUri(myGif, abc);
             var controller = AnimationBehavior.GetAnimator(myGif);
             controller.Play();
         }
@@ -195,7 +199,8 @@ namespace MultiMediaPlayer
             PlayList.SelectedIndex = _currentPosition;
             PlayList.ScrollIntoView(PlayList.SelectedItem);
             setImagePlay(_pauseUri);
-           
+            ((Storyboard)Resources["Storyboard"]).Resume();
+
         }
 
         private void PlayShuffle(int position)
@@ -418,6 +423,7 @@ namespace MultiMediaPlayer
 
                 PlayList.ItemsSource = _fullPaths;
                 PlayPosition(_currentPosition);
+                ((Storyboard)Resources["Storyboard"]).Resume();
                 RepeatMyGif();
                 return;
             }
@@ -435,6 +441,7 @@ namespace MultiMediaPlayer
             if (_isPlaying == false)
             {
                 _player.Play();
+                ((Storyboard)Resources["Storyboard"]).Resume();
                 RepeatMyGif();
                 setImagePlay(_pauseUri);
             }
@@ -442,10 +449,10 @@ namespace MultiMediaPlayer
                 _player.Pause();
                 PauseMyGif();
                 setImagePlay(_playUri);
+                ((Storyboard)Resources["Storyboard"]).Pause();
 
             }
-            ((Storyboard)Resources["Storyboard"]).Begin();
-            // stop :  ((Storyboard)Resources["Storyboard"]).Pause();
+           
             _isPlaying = !_isPlaying;
 
         }
@@ -475,6 +482,8 @@ namespace MultiMediaPlayer
             _player.Stop();
             setImagePlay(_playUri);
             if(_isPlaying==true)PauseMyGif();
+            ((Storyboard)Resources["Storyboard"]).Begin();
+            ((Storyboard)Resources["Storyboard"]).Pause();
             _isPlaying = false;
         }
 
@@ -544,7 +553,7 @@ namespace MultiMediaPlayer
         private void slider_ValueChange(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             CurrentTime.Text = TimeSpan.FromSeconds(sliderDuration.Value).ToString(@"mm\:ss");
-            _player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
+            //_player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
         }
 
         private void sliderProcess_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)

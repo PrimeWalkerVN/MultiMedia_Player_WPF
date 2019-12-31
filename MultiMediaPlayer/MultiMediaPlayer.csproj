@@ -130,11 +130,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\music.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="drawables\Load.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -165,11 +160,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="drawables\spotify.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="images\hangfel.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -179,6 +169,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="drawables\volume.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\music.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="drawables\music-player.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

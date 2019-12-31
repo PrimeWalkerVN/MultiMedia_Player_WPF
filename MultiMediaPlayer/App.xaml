@@ -61,7 +61,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
                         <!--Add name to ellipse to use in  controltemplate triggers-->
-                        <Ellipse x:Name="Ellipse" Height="10" Width="10" Fill="Green"></Ellipse>
+                        <Ellipse x:Name="Ellipse" Height="15" Width="15" Fill="Green"></Ellipse>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="Ellipse" Property="Fill" Value="Red"></Setter>
