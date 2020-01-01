@@ -13,9 +13,12 @@ namespace MultiMediaPlayer
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var info = value as string;
-            var tokens = info.Split(new string[] { "." },
-                StringSplitOptions.None);
-            return tokens[0];
+            int pos = info.LastIndexOf('.');
+            //var tokens = info.Split(new string[] { "." },
+            //    StringSplitOptions.None);
+            var ext = info.Substring(pos);
+            var name = info.Substring(0, info.Length - ext.Length);
+            return name;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

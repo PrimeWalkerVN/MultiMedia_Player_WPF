@@ -86,6 +86,10 @@ namespace MultiMediaPlayer
             {
                 PlayButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, PlayButton));
             }
+            if (e.Control && e.Shift && (e.KeyCode == Keys.S))
+            {
+                StopButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, StopButton));
+            }
             if (e.Control && e.Shift && (e.KeyCode == Keys.R))
             {
                 ForwardButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, ForwardButton));
@@ -93,6 +97,18 @@ namespace MultiMediaPlayer
             if (e.Control && e.Shift && (e.KeyCode == Keys.E))
             {
                 PreviousButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, PreviousButton));
+            }
+            if (e.Control && e.Shift && e.KeyCode == Keys.J)
+            {
+                VolumeSlider.Value -= 10;
+            }
+            if (e.Control && e.Shift && e.KeyCode == Keys.K)
+            {
+                VolumeSlider.Value += 10;
+            }
+            if (e.Control && e.Shift && e.KeyCode == Keys.M)
+            {
+                VolumeModeButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent, VolumeModeButton));
             }
         }
 
@@ -244,7 +260,7 @@ namespace MultiMediaPlayer
 
             writer.Close();
 
-            System.Windows.MessageBox.Show("PlayList is saved");
+            //System.Windows.MessageBox.Show("PlayList is saved");
 
         }
 
