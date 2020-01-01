@@ -36,7 +36,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border  BorderThickness="1" BorderBrush="Black" Background="Black" Height="3"/>
+                        <Border  BorderThickness="1" BorderBrush="Black" Background="Black" Height="4"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -48,7 +48,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border SnapsToDevicePixels="True" Background="Green"  BorderThickness="1" BorderBrush="YellowGreen" Height="3"/>
+                        <Border SnapsToDevicePixels="True" Background="Green"  BorderThickness="1" BorderBrush="YellowGreen" Height="4"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -101,6 +101,7 @@
                 <Trigger Property="Orientation" Value="Horizontal">
                     <Setter Property="MinHeight" Value="21" />
                     <Setter Property="MinWidth" Value="104" />
+                    <Setter Property="Cursor" Value="Hand" />
                     <Setter Property="Template" Value="{StaticResource Slider}" />
                 </Trigger>
             </Style.Triggers>

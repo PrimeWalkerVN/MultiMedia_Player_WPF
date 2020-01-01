@@ -555,7 +555,7 @@ namespace MultiMediaPlayer
         private void slider_ValueChange(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             CurrentTime.Text = TimeSpan.FromSeconds(sliderDuration.Value).ToString(@"mm\:ss");
-            //_player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
+            if(isDraggingSlider==false) _player.Position = TimeSpan.FromSeconds(sliderDuration.Value);
         }
 
         private void sliderProcess_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
