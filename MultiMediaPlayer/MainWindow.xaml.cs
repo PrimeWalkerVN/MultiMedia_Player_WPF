@@ -698,10 +698,12 @@ namespace MultiMediaPlayer
             if(value != 0)
             {
                 _currentVolumeValue = value;
+                SetImageVolume(_volumeUri);
                 //_isMute = true;
             }
             else
             {
+                SetImageVolume(_muteUri);
                 //_currentVolumeValue = value;
                 //_isMute = false;
             }

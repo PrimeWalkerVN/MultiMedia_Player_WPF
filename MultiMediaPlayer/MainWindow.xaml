@@ -235,7 +235,7 @@
                            RenderOptions.BitmapScalingMode="HighQuality"
                            />
                     </Button>
-                    <Slider Style="{StaticResource Horizontal_Slider}"  Name="VolumeSlider" IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Maximum="100" ValueChanged="VolumeSliderChanged" />
+                    <Slider Style="{StaticResource Horizontal_Slider}"  Name="VolumeSlider" IsMoveToPointEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Maximum="100" ValueChanged="VolumeSliderChanged" Value="75" />
                 </StackPanel>
             </Grid>
 
