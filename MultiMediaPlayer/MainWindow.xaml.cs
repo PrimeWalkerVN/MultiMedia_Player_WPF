@@ -441,6 +441,8 @@ namespace MultiMediaPlayer
                 if (_isPlaying == false)PlayPosition(_currentPosition);
                 ((Storyboard)Resources["Storyboard"]).Resume();
                 RepeatMyGif();
+                PlayList.SelectedIndex = _currentPosition;
+                PlayList.ScrollIntoView(PlayList.SelectedItem);
                 return;
             }
             else
@@ -639,6 +641,7 @@ namespace MultiMediaPlayer
 
         private void OnRemoveMedia_Click(object sender, RoutedEventArgs e)
         {
+            int temp = _currentPosition;
             var selectedItem = PlayList.SelectedItems;
             List<int> t = new List<int>();
             int a = 0;
@@ -661,6 +664,7 @@ namespace MultiMediaPlayer
             for (int i = 0; i < t.Count; ++i)
             {
                 _playList.RemoveAt(t[i]);
+                if (_currentPosition > t[i]) _currentPosition--;
             }
             _mediaPositionList.Clear();
             for (int i = 0; i < _playList.TotalMedia; i++)
@@ -679,7 +683,8 @@ namespace MultiMediaPlayer
                 _fullPaths.Add(info);
             }
             PlayList.ItemsSource = _fullPaths;
-          
+            PlayList.SelectedIndex = _currentPosition;
+            PlayList.ScrollIntoView(PlayList.SelectedItem);
         }
 
         private void myGif_Loaded(object sender, RoutedEventArgs e)

@@ -3,7 +3,7 @@
 * 1712800 Mai Huy Thông
 > Chương trình được thiết kế bằng **WPF** dựa trên nền tảng **ngôn ngữ lập trình C#**. Người chơi chọn một tập tin hoặc nhiều tập tin nhạc khác nhau, chương trình hỗ trợ phát nhạc với các chức năng cơ bản của music media player<br>
 
-<br> **Video demo: [https://youtu.be/xx4QaaIEAxs](https://youtu.be/xx4QaaIEAxs)**
+<br> **Video demo: [https://youtu.be/IuC4qUIeOg8](https://youtu.be/IuC4qUIeOg8)**
 
 ## **Những chức năng đã làm được**
 
@@ -24,10 +24,18 @@ Các chức năng theo yêu cầu của project và điểm tự đánh giá:
     * Danh sách playlist chơi lần cuối
     * Tập tin của playlist lần cuối đang chơi để người dùng bắt đầu chơi tiếp
 9. Hook bàn phím để ra lệnh chơi / tạm dừng, kế tiếp, trước đó. (1.5 điểm)<br>
+    * CTRL + SHIFT + P : Dừng / Chơi tiếp
+    * CTRL + SHIFT + S : Dừng bài nhạc
+    * CTRL + SHIFT + E : Chơi bài nhạc trước đó
+    * CTRL + SHIFT + R : Chơi bài nhạc kế tiếp
+    * CTRL + SHIFT + J : Giảm âm lượng xuống 10
+    * CTRL + SHIFT + K : Tăng âm lượng lên 10
+    * CTRL + SHIFT + M : Mute / Disable mute
 
  * **Tổng điểm: 10**
 ### **II. Các đặc điểm và chức năng khác**
 ----
-* Có thể thêm nhiều tập tin nhạc vào danh sách nhạc mà người dùng đang chơi
+* Có thể thêm một hoặc nhiều tập tin nhạc vào danh sách nhạc mà người dùng đang chơi
 * Có thêm thanh slider có thể tua nhạc
-* Các chức năng đã được test qua, chi tiết có thể xem ở video demo: [Click here](https://youtu.be/xx4QaaIEAxs)
+* UX/UI khá chỉnh chu :))
+* Các chức năng đã được test qua, chi tiết có thể xem ở video demo: [Click here](https://youtu.be/IuC4qUIeOg8)
